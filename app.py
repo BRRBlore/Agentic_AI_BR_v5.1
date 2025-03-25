@@ -1,43 +1,48 @@
+# app.py
 import streamlit as st
 import importlib.util
+import os
 
-# ---- Load Supervisor Agent ----
-sup_path = "/content/drive/My Drive/AI_Agent_4/agents/supervisor.py"
-spec = importlib.util.spec_from_file_location("supervisor", sup_path)
-supervisor = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(supervisor)
+# --- Load supervisor.py dynamically ---
+def load_supervisor_module():
+    file_path = os.path.join("agents", "supervisor.py")
+    spec = importlib.util.spec_from_file_location("supervisor", file_path)
+    supervisor = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(supervisor)
+    return supervisor
 
-# ---- Streamlit App UI ----
-st.set_page_config(page_title="Tech Support Chat Agent BR v4.0")
-st.title("🤖 Tech Support Chat Agent BR v4.0")
-st.markdown("Ask your computer, server, order, or delivery questions below.")
+supervisor = load_supervisor_module()
 
-# Initialize chat history if not already in session
-if "messages" not in st.session_state:
-    st.session_state.messages = []
+# --- Streamlit UI Setup ---
+st.set_page_config(page_title="Tech Support Chat Agent BR v5.1")
 
-# Show chat history
-for msg in st.session_state.messages:
-    role, content = msg["role"], msg["content"]
-    icon = "🧑‍💻" if role == "user" else "🤖"
-    st.markdown(f"{icon} **{role.capitalize()}:** {content}", unsafe_allow_html=True)
+st.markdown("""
+    <h1 style='text-align: center;'>🤖 Tech Support Chat Agent BR<br>v5.1</h1>
+    <p style='text-align: center;'>Ask your computer, server, order, or delivery questions below.</p>
+""", unsafe_allow_html=True)
 
-# Input box and Send button
-st.markdown("**Ask a question:**")
-col1, col2 = st.columns([5, 1])
-with col1:
-    user_input = st.text_input("", key="user_input", label_visibility="collapsed")
-with col2:
-    send_clicked = st.button("Send", use_container_width=True)
+# --- Chat Memory ---
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
 
-# Handle input
-if send_clicked and user_input.strip():
-    st.session_state.messages.append({"role": "user", "content": user_input})
-    response = supervisor.route_query(user_input)
-    st.session_state.messages.append({"role": "assistant", "content": response})
-    st.rerun()
+# --- Input Form ---
+with st.form("chat_form", clear_on_submit=True):
+    user_query = st.text_input("Ask a question:", key="input_field")
+    submitted = st.form_submit_button("Send")
 
-# Reset Chat
-if st.button("🔁 Reset Chat"):
-    st.session_state.messages = []
-    st.rerun()
+if submitted and user_query:
+    st.session_state.chat_history.append(("user", user_query))
+    ai_response = supervisor.route_query(user_query)
+    st.session_state.chat_history.append(("assistant", ai_response))
+
+# --- Display Chat ---
+for speaker, message in st.session_state.chat_history:
+    if speaker == "user":
+        st.markdown(f"👤 <b>User:</b> {message}", unsafe_allow_html=True)
+    else:
+        st.markdown(f"🤖 <b>Assistant:</b> {message}", unsafe_allow_html=True)
+
+# --- Reset Chat ---
+if st.button("🔄 Reset Chat"):
+    st.session_state.chat_history = []
+    st.rerun()  # ✅ Replaces deprecated experimental_rerun
