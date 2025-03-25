@@ -3,31 +3,43 @@
 import pandas as pd
 import os
 
-# Correct path and file name
-EXCEL_PATH = os.path.join("Ecommerce_Transport_LogisticsTracking", "Transportation_and_Logistics_Tracking_Dataset.xlsx")
+# Correct Excel file and sheet path
+EXCEL_PATH = os.path.join(
+    "Ecommerce_Transport_LogisticsTracking",
+    "Transportation_and_Logistics_Tracking_Dataset.xlsx"
+)
 
 def track_delivery(tracking_id):
     try:
-        # Load the Refined sheet
+        # Load the refined sheet
         df = pd.read_excel(EXCEL_PATH, sheet_name="Refined")
 
-        # Match tracking ID using correct column name "Delivery Id"
-        match = df[df["Delivery Id"].astype(str).str.contains(str(tracking_id), case=False, na=False)]
+        # Clean column headers in case of hidden whitespaces
+        df.columns = df.columns.str.strip()
+
+        # Standardize Delivery ID column and tracking input
+        df["Delivery Id"] = df["Delivery Id"].astype(str).str.strip().str.upper()
+        tracking_id = tracking_id.strip().upper()
+
+        # Match the tracking ID
+        match = df[df["Delivery Id"].str.contains(tracking_id, na=False)]
 
         if match.empty:
             return "⚠️ Delivery tracking file not found. Please check the Delivery ID."
 
         row = match.iloc[0]
+
+        # Construct response
         response = (
             f"📦 **Delivery ID**: {row['Delivery Id']}\n"
             f"🚚 **Status**: ✅ Delivered\n"
-            f"🕒 **Dispatched On**: {row['Dispatched Date']}\n"
-            f"⏱️ **Delivered At**: {row['Delivery Date']}\n"
-            f"📍 **From**: {row['Source Location']}\n"
-            f"📍 **To**: {row['Destination Location']}\n"
-            f"📊 **On-Time**: {row['On-Time']}\n"
-            f"🌤️ **Weather**: {row['Weather']}\n"
-            f"⭐ **Customer Rating**: {row['Customer Rating']}"
+            f"🕒 **Dispatched On**: {row['created_at']}\n"
+            f"⏱️ **Delivered At**: {row['actual_delivery_time']}\n"
+            f"📍 **From**: {row['Origin_Location']}\n"
+            f"📍 **To**: {row['Destination_Location']}\n"
+            f"📊 **On-Time Delivery**: {'Yes' if row['On time Delivery'] == 1 else 'No'}\n"
+            f"🌤️ **Weather**: {row['condition_text']}\n"
+            f"⭐ **Customer Rating**: {row['Customer_rating']}"
         )
         return response
 
