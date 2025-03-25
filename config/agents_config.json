@@ -3,7 +3,11 @@
     {
       "name": "troubleshooter_agent",
       "description": "Handles troubleshooting and hardware/software issue queries",
-      "keywords": ["boot", "power", "screen", "slow", "error", "not working", "won't start", "issue", "problem"]
+      "keywords": [
+        "boot", "power", "screen", "slow", "error", "not working",
+        "won't start", "issue", "problem", "motherboard", "fan",
+        "overheat", "crash", "laptop", "freeze", "hang", "hardware", "software"
+      ]
     },
     {
       "name": "order_lookup_agent",
