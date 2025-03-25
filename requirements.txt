@@ -6,3 +6,4 @@ sentence-transformers
 pandas
 streamlit
 scikit-learn
+openpyxl
