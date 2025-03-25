@@ -1,24 +1,23 @@
 # agents/troubleshooter_agent.py
 
 import pandas as pd
+import os
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+# Ensure correct path regardless of where Streamlit is run
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CSV_PATH = os.path.join(BASE_DIR, "tech_support_sample_QA.csv")
+
 # Load the dataset
-CSV_PATH = "/content/drive/My Drive/AI_Agent_4/tech_support_sample_QA.csv"
 df = pd.read_csv(CSV_PATH)
 
-# Fit the TF-IDF vectorizer on the questions
+# Vectorize the questions
 vectorizer = TfidfVectorizer()
-tfidf_matrix = vectorizer.fit_transform(df['question'])
+X = vectorizer.fit_transform(df["question"])
 
-def find_answer(user_input):
-    input_vec = vectorizer.transform([user_input])
-    similarity = cosine_similarity(input_vec, tfidf_matrix)
-    best_match_index = similarity.argmax()
-    best_score = similarity[0][best_match_index]
-
-    if best_score < 0.3:
-        return "🤖 Sorry, I couldn’t find a close match. Can you please rephrase?"
-
-    return f"💡 {df.iloc[best_match_index]['answer']}"
+def handle(query):
+    query_vec = vectorizer.transform([query])
+    similarity = cosine_similarity(query_vec, X)
+    idx = similarity.argmax()
+    return df.iloc[idx]["answer"]
