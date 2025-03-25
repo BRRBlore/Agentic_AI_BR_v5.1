@@ -1,31 +1,26 @@
 # tools/order_db.py
-
 import pandas as pd
 import os
 
-# Path to the CSV file (relative to root of your repo)
-CSV_PATH = os.path.join(os.path.dirname(__file__), "../tech_support_sample_QA.csv")
+ORDER_DATA_PATH = os.path.join("Ecommerce_Order_Dataset", "orders.csv")
 
-def lookup_order(order_id: str) -> str:
+def lookup_order(order_id):
     try:
-        df = pd.read_csv(CSV_PATH)
+        df = pd.read_csv(ORDER_DATA_PATH)
+        result = df[df['Order ID'].astype(str).str.contains(order_id, case=False)]
 
-        # Normalize comparison
-        order_row = df[df['Order ID'].astype(str).str.lower() == order_id.lower()]
-        if order_row.empty:
-            return f"❌ Order ID '{order_id}' not found."
+        if result.empty:
+            return "⚠️ Order not found. Please check the Order ID."
 
-        row = order_row.iloc[0]
-        return (
-            f"📦 Order Status: {row['Status']}\n"
-            f"🗓️ Order Date: {row['Order Date']}\n"
-            f"✅ Approved On: {row['Approval Date']}\n"
-            f"🚚 Delivered On: {row['Delivery Date']}\n"
-            f"📅 Estimated Delivery: {row['Estimated Delivery']}"
-        )
+        row = result.iloc[0]
+        response = f"""📦 **Order Status**: {row['Status']}
+🗓️ **Order Date**: {row['Order Date']}
+✅ **Approved On**: {row['Approval Date']}
+🚚 **Delivered On**: {row['Delivery Date']}
+📅 **Estimated Delivery**: {row['Estimated Delivery']}"""
+        return response
 
     except FileNotFoundError:
-        return "⚠️ Order data file not found. Please contact support."
-
+        return "⚠️ Order tracking file not found. Please contact support."
     except Exception as e:
-        return f"⚠️ An unexpected error occurred: {e}"
+        return f"⚠️ An unexpected error occurred: {str(e)}"

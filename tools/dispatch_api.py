@@ -1,38 +1,30 @@
 # tools/dispatch_api.py
-
 import pandas as pd
 import os
 
-# Path to your Excel file inside the repo
-EXCEL_PATH = os.path.join(os.path.dirname(__file__), "../Transportation_and_Logistics_Tracking_Dataset.xlsx")
+DISPATCH_FILE = os.path.join("Ecommerce_Transport_LogisticsTracking", "Transportation_and_Logistics_Tracking_Dataset.xlsx")
 
-def track_delivery(delivery_id: str) -> str:
+def track_dispatch(dispatch_id):
     try:
-        # Read the 'Refined' sheet (update this if your data is in another sheet)
-        df = pd.read_excel(EXCEL_PATH, sheet_name="Refined")
+        df = pd.read_excel(DISPATCH_FILE, sheet_name="Refined")
+        result = df[df['Delivery ID'].astype(str).str.contains(dispatch_id, case=False)]
 
-        # Find matching row by Delivery ID
-        row = df[df["Delivery Id"].astype(str).str.lower() == delivery_id.lower()]
-        if row.empty:
-            return f"❌ Delivery ID '{delivery_id}' not found."
+        if result.empty:
+            return "⚠️ Delivery tracking ID not found. Please contact support."
 
-        row = row.iloc[0]  # Get the first match
-
-        # Format the response
-        return (
-            f"📦 **Delivery ID**: {row['Delivery Id']}\n"
-            f"🚚 **Status**: ✅ Delivered\n"
-            f"🕒 **Dispatched On**: {row['created_at']}\n"
-            f"⏱️ **Delivered At**: {row['actual_delivery_time']}\n"
-            f"📍 **From**: {row['Origin_Location']}\n"
-            f"📍 **To**: {row['Destination_Location']}\n"
-            f"📊 **On-Time**: {'Yes' if row['On time Delivery'] == 1 else 'No'}\n"
-            f"🌤️ **Weather**: {row['condition_text']}\n"
-            f"⭐ **Customer Rating**: {row['Customer_rating']}"
-        )
+        row = result.iloc[0]
+        response = f"""📦 **Delivery ID**: {row['Delivery ID']}
+🚚 **Status**: ✅ {row['Status']}
+🕒 **Dispatched On**: {row['Dispatched On']}
+⏱️ **Delivered At**: {row['Delivered At']}
+📍 **From**: {row['From']}
+📍 **To**: {row['To']}
+📊 **On-Time**: {row['On Time']}
+🌤️ **Weather**: {row['Weather']}
+⭐ **Customer Rating**: {row['Customer Rating']}"""
+        return response
 
     except FileNotFoundError:
         return "⚠️ Delivery tracking file not found. Please contact support."
-
     except Exception as e:
-        return f"⚠️ An error occurred while tracking delivery: {str(e)}"
+        return f"⚠️ An unexpected error occurred: {str(e)}"
