@@ -1,45 +1,43 @@
+# tools/dispatch_api.py
+
 import pandas as pd
 import os
 
-# Set correct path for the Excel file
-EXCEL_PATH = os.path.join(
-    "Ecommerce_Transport_LogisticsTracking",
-    "Transportation_and_Logistics_Tracking_Dataset.xlsx"
-)
+CSV_PATH = os.path.join("Ecommerce_Transport_LogisticsTracking", "Transportation_and_Logistics_Tracking_Dataset.xlsx")
 
 def track_delivery(tracking_id):
     try:
         # Load the correct sheet
-        df = pd.read_excel(EXCEL_PATH, sheet_name="Refined")
+        df = pd.read_excel(CSV_PATH, sheet_name="Refined")
 
-        # OPTIONAL: Print columns for debug
-        # print("Available columns:", df.columns.tolist())
+        # Clean up column names (remove spaces, lower case)
+        df.columns = df.columns.str.strip()
 
-        # Match using the correct column name: 'Delivery Id'
+        # Check column name and fix key mismatch
+        if "Delivery Id" not in df.columns:
+            return "❌ Error: 'Delivery Id' column not found in Excel sheet."
+
+        # Match against tracking ID (case-insensitive)
         match = df[df["Delivery Id"].astype(str).str.contains(str(tracking_id), case=False, na=False)]
 
         if match.empty:
             return "⚠️ Delivery tracking file not found. Please check the Delivery ID."
 
         row = match.iloc[0]
-
-        # Construct response
         response = (
             f"📦 **Delivery ID**: {row['Delivery Id']}\n"
             f"🚚 **Status**: ✅ Delivered\n"
-            f"🕒 **Dispatched On**: {row['created_at']}\n"
-            f"⏱️ **Delivered At**: {row['actual_delivery_time']}\n"
-            f"📍 **From**: {row['Origin_Location']}\n"
-            f"📍 **To**: {row['Destination_Location']}\n"
-            f"📊 **On-Time**: {row['On time Delivery']}\n"
-            f"🌤️ **Weather**: {row['condition_text']}\n"
-            f"⭐ **Customer Rating**: {row['Customer_rating']}"
+            f"🕒 **Dispatched On**: {row.get('created_at', 'N/A')}\n"
+            f"⏱️ **Delivered At**: {row.get('actual_delivery_time', 'N/A')}\n"
+            f"📍 **From**: {row.get('Origin_Location', 'N/A')}\n"
+            f"📍 **To**: {row.get('Destination_Location', 'N/A')}\n"
+            f"📊 **On-Time**: {row.get('On time Delivery', 'N/A')}\n"
+            f"🌤️ **Weather**: {row.get('condition_text', 'N/A')}\n"
+            f"⭐ **Customer Rating**: {row.get('Customer_rating', 'N/A')}"
         )
         return response
 
     except FileNotFoundError:
-        return "❌ Error: Logistics tracking file not found on the server."
-    except KeyError as e:
-        return f"❌ Error fetching delivery details: Column not found: {str(e)}"
+        return f"❌ File not found: {CSV_PATH}"
     except Exception as e:
         return f"❌ Error fetching delivery details: {str(e)}"
