@@ -1,20 +1,31 @@
+# tools/order_db.py
+
 import pandas as pd
+import os
 
-DATA_PATH = "/content/drive/My Drive/AI_Agent_4/Ecommerce_Order_Dataset/train/df_Orders.csv"
-df_orders = pd.read_csv(DATA_PATH)
+# Path to the CSV file (relative to root of your repo)
+CSV_PATH = os.path.join(os.path.dirname(__file__), "../tech_support_sample_QA.csv")
 
-def lookup_order(order_id):
-    order_id = order_id.strip().upper()
-    match = df_orders[df_orders['order_id'].str.upper() == order_id]
+def lookup_order(order_id: str) -> str:
+    try:
+        df = pd.read_csv(CSV_PATH)
 
-    if match.empty:
-        return "❌ Order not found. Please check the order ID."
+        # Normalize comparison
+        order_row = df[df['Order ID'].astype(str).str.lower() == order_id.lower()]
+        if order_row.empty:
+            return f"❌ Order ID '{order_id}' not found."
 
-    row = match.iloc[0]
-    return (
-        f"📦 Order Status: {row['order_status'].capitalize()}\n"
-        f"🗓️ Order Date: {row['order_purchase_timestamp']}\n"
-        f"✅ Approved On: {row.get('order_approved_at', 'N/A')}\n"
-        f"🚚 Delivered On: {row.get('order_delivered_timestamp', 'Not yet delivered')}\n"
-        f"📅 Estimated Delivery: {row['order_estimated_delivery_date']}"
-    )
+        row = order_row.iloc[0]
+        return (
+            f"📦 Order Status: {row['Status']}\n"
+            f"🗓️ Order Date: {row['Order Date']}\n"
+            f"✅ Approved On: {row['Approval Date']}\n"
+            f"🚚 Delivered On: {row['Delivery Date']}\n"
+            f"📅 Estimated Delivery: {row['Estimated Delivery']}"
+        )
+
+    except FileNotFoundError:
+        return "⚠️ Order data file not found. Please contact support."
+
+    except Exception as e:
+        return f"⚠️ An unexpected error occurred: {e}"
