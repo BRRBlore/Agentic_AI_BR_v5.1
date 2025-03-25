@@ -1,0 +1,19 @@
+{
+  "agents": [
+    {
+      "name": "troubleshooter_agent",
+      "description": "Handles troubleshooting and hardware/software issue queries",
+      "keywords": ["boot", "power", "screen", "slow", "error", "not working", "won't start", "issue", "problem"]
+    },
+    {
+      "name": "order_lookup_agent",
+      "description": "Looks up order status based on order ID",
+      "keywords": ["order", "order id", "check order", "order status"]
+    },
+    {
+      "name": "parts_dispatch_agent",
+      "description": "Tracks parts or delivery using dispatch/delivery ID",
+      "keywords": ["track", "delivery", "dispatch", "shipment", "status", "package", "logistics"]
+    }
+  ]
+}
