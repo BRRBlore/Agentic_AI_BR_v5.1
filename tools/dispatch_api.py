@@ -3,41 +3,52 @@
 import pandas as pd
 import os
 
-CSV_PATH = os.path.join("Ecommerce_Transport_LogisticsTracking", "Transportation_and_Logistics_Tracking_Dataset.xlsx")
+# ✅ Use absolute path to Excel file on Google Drive
+EXCEL_PATH = "/content/drive/My Drive/AI_Agent_4/Ecommerce_Transport_LogisticsTracking/Transportation_and_Logistics_Tracking_Dataset.xlsx"
 
-def track_delivery(tracking_id):
+def track_delivery(delivery_id: str) -> str:
     try:
-        # Load the correct sheet
-        df = pd.read_excel(CSV_PATH, sheet_name="Refined")
+        print(f"🔎 DEBUG: Looking for delivery ID -> {delivery_id}")  # ✅ Debug line
 
-        # Clean up column names (remove spaces, lower case)
-        df.columns = df.columns.str.strip()
+        # ✅ Read 'Refined' sheet
+        df = pd.read_excel(EXCEL_PATH, sheet_name="Refined")
 
-        # Check column name and fix key mismatch
-        if "Delivery Id" not in df.columns:
-            return "❌ Error: 'Delivery Id' column not found in Excel sheet."
+        # ✅ Normalize column names for safer access
+        df.columns = df.columns.str.strip().str.lower()
 
-        # Match against tracking ID (case-insensitive)
-        match = df[df["Delivery Id"].astype(str).str.contains(str(tracking_id), case=False, na=False)]
+        # ✅ Check for correct delivery ID column
+        delivery_col = None
+        if "delivery id" in df.columns:
+            delivery_col = "delivery id"
+        elif "deliveryid" in df.columns:
+            delivery_col = "deliveryid"
+        else:
+            return "❌ Delivery ID column not found in dataset."
+
+        # ✅ Perform case-insensitive matching
+        match = df[df[delivery_col].astype(str).str.contains(delivery_id, case=False, na=False)]
 
         if match.empty:
-            return "⚠️ Delivery tracking file not found. Please check the Delivery ID."
+            return "❌ Delivery ID not found. Please check and try again."
 
         row = match.iloc[0]
+
+        # ✅ Format response from cleaned columns
         response = (
-            f"📦 **Delivery ID**: {row['Delivery Id']}\n"
+            f"📦 **Delivery ID**: {row[delivery_col]}\n"
             f"🚚 **Status**: ✅ Delivered\n"
-            f"🕒 **Dispatched On**: {row.get('created_at', 'N/A')}\n"
-            f"⏱️ **Delivered At**: {row.get('actual_delivery_time', 'N/A')}\n"
-            f"📍 **From**: {row.get('Origin_Location', 'N/A')}\n"
-            f"📍 **To**: {row.get('Destination_Location', 'N/A')}\n"
-            f"📊 **On-Time**: {row.get('On time Delivery', 'N/A')}\n"
-            f"🌤️ **Weather**: {row.get('condition_text', 'N/A')}\n"
-            f"⭐ **Customer Rating**: {row.get('Customer_rating', 'N/A')}"
+            f"🕒 **Dispatched On**: {row['created_at']}\n"
+            f"⏱️ **Delivered At**: {row['actual_delivery_time']}\n"
+            f"📍 **From**: {row['origin_location']}\n"
+            f"📍 **To**: {row['destination_location']}\n"
+            f"📊 **On-Time**: {'Yes' if row['on time delivery'] == 1 else 'No'}\n"
+            f"🌤️ **Weather**: {row['condition_text']}\n"
+            f"⭐ **Customer Rating**: {row['customer_rating']}"
         )
+
         return response
 
     except FileNotFoundError:
-        return f"❌ File not found: {CSV_PATH}"
+        return "❌ Logistics dataset not found. Please check the file path."
     except Exception as e:
-        return f"❌ Error fetching delivery details: {str(e)}"
+        return f"❌ Error: {str(e)}"

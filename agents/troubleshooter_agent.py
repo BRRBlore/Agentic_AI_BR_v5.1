@@ -1,23 +1,47 @@
 # agents/troubleshooter_agent.py
 
-import pandas as pd
 import os
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
+from langchain.vectorstores import FAISS
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.chat_models import ChatOpenAI
+from langchain.chains import ConversationalRetrievalChain
 
-# Ensure correct path regardless of where Streamlit is run
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CSV_PATH = os.path.join(BASE_DIR, "tech_support_sample_QA.csv")
+def handle(query, memory=None):
+    try:
+        # ✅ Absolute path to FAISS index in Google Drive
+        index_path = "/content/drive/My Drive/AI_Agent_4/faiss_index"
+        
+        # Load embedding model
+        embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+        
+        # Load FAISS vectorstore
+        vectorstore = FAISS.load_local(
+            index_path, 
+            embedding_model, 
+            allow_dangerous_deserialization=True
+        )
 
-# Load the dataset
-df = pd.read_csv(CSV_PATH)
+        # Create retriever from vectorstore
+        retriever = vectorstore.as_retriever(search_type="similarity", k=3)
 
-# Vectorize the questions
-vectorizer = TfidfVectorizer()
-X = vectorizer.fit_transform(df["question"])
+        # Load OpenAI LLM
+        llm = ChatOpenAI(
+            model="gpt-3.5-turbo",
+            temperature=0,
+            openai_api_key=os.environ.get("OPENAI_API_KEY")
+        )
 
-def handle(query):
-    query_vec = vectorizer.transform([query])
-    similarity = cosine_similarity(query_vec, X)
-    idx = similarity.argmax()
-    return df.iloc[idx]["answer"]
+        # Setup RAG chain with context-aware memory
+        qa_chain = ConversationalRetrievalChain.from_llm(
+            llm=llm,
+            retriever=retriever,
+            memory=memory
+        )
+
+        # ✅ Replaces deprecated `.run()` with `.invoke()`
+        result = qa_chain.invoke({"question": query})
+        
+        return f"💡 {result}"
+
+    except Exception as e:
+        return f"❌ Error in Troubleshooter Agent: {str(e)}"
