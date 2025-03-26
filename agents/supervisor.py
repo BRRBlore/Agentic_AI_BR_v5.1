@@ -1,8 +1,6 @@
-# agents/supervisor.py
-
 import json
 from agents import troubleshooter_agent, order_lookup_agent, parts_dispatch_agent
-from tools.memory import memory  # <-- shared memory object
+from tools.memory import memory  # ✅ shared memory object
 
 # Load agent config
 with open("config/agents_config.json", "r") as f:
@@ -13,7 +11,8 @@ AGENT_KEYWORDS = {
     for agent in config["agents"]
 }
 
-def route_query(query):
+# ✅ Accept memory as a second argument
+def route_query(query, memory=None):
     query_lower = query.lower()
 
     if any(keyword in query_lower for keyword in AGENT_KEYWORDS["troubleshooter_agent"]):
