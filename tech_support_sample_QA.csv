@@ -19,3 +19,102 @@ Laptop freezes randomly.,"Update drivers, scan for malware, and check system log
 USB ports are not working.,"Update chipset drivers, check power management settings, or test in BIOS."
 How to update firmware?,Download latest firmware from vendor site and follow update instructions carefully.
 No audio from speakers.,"Check volume, update audio drivers, and test with external speakers or headphones."
+Why is my laptop getting hot quickly?,"Your laptop may be overheating due to dust in the fan, poor ventilation, or heavy background processes. Clean the fan and ensure proper airflow."
+How to fix a frozen laptop screen?,"Hold down the power button to force restart. If it persists, update drivers or check for software conflicts."
+Why is my laptop battery draining so fast?,"Battery drain can be caused by background apps, screen brightness, or an old battery. Reduce brightness and close unused apps."
+Why doesn't my USB device get detected?,Try using a different port. Update USB drivers or check the device on another computer.
+How do I reset a forgotten Windows password?,"Use password reset disk, recovery options, or reset using your Microsoft account."
+How to fix no sound on my laptop?,"Check sound settings, ensure the device isn't muted, and update audio drivers."
+Laptop camera not working during video calls?,"Check app permissions, update camera drivers, and restart your app."
+Why is my laptop not connecting to mobile hotspot?,"Check hotspot settings, forget and reconnect to the network, and update wireless drivers."
+Laptop screen flickers when moved?,"Could be a loose screen cable. If under warranty, seek repair."
+How to fix keyboard typing wrong characters?,Check keyboard language settings and clean the keyboard.
+Laptop stuck in boot loop?,Boot into Safe Mode and check for faulty drivers or updates.
+How to fix BSOD error code 0x0000007B?,Check for hard drive issues or malware. Boot into Safe Mode and scan.
+My system time is incorrect on startup?,Replace CMOS battery or sync time with internet automatically.
+Why do apps take long to open?,"Too many background processes, full disk, or slow hard drive. Clean startup apps."
+Why does my fan run loud all the time?,"Clean fan and vents, check CPU usage, and update BIOS if needed."
+How do I upgrade laptop RAM?,Check compatibility online or manufacturer’s site. Install matched RAM modules.
+My Wi-Fi gets disconnected frequently?,"Update network drivers, disable power-saving for Wi-Fi, and restart router."
+Laptop shuts down randomly?,"Possible overheating, failing hardware, or loose battery connection."
+Cannot open Microsoft Office files?,"Repair Office installation, update software, or check file associations."
+Why are my browser pages not loading?,"Clear cache, check DNS settings, and try another browser."
+Laptop doesn’t wake from sleep?,Update display drivers and power management settings.
+Laptop touchpad gestures not working?,Ensure precision drivers are installed and gestures are enabled.
+My screen resolution changed suddenly?,Update display driver and check display settings.
+How to fix repeated ‘Not Responding’ errors?,"Close background apps, check for system updates, and run performance troubleshooter."
+Can’t access laptop after update?,Boot to recovery and uninstall latest updates.
+How to change boot order in BIOS?,Enter BIOS on startup and use arrow keys to move boot priority.
+Why is my laptop making clicking noises?,Could indicate a failing hard drive. Backup data immediately.
+Laptop won’t detect second monitor?,"Check cable, update GPU driver, and press Win + P to switch display mode."
+How to clean laptop safely?,Use a microfiber cloth and isopropyl alcohol for exterior. Use compressed air for vents.
+Why do I see lines on my screen?,Check for loose screen cable or GPU damage.
+Laptop volume keys not working?,Reinstall keyboard drivers or check system key settings.
+Can’t install software due to admin rights?,Use administrator account or request access from IT.
+Laptop keyboard backlight not working?,Check BIOS settings or install OEM utility software.
+My screen turns off but laptop stays on?,Adjust power settings and check sleep timeout configuration.
+Can’t hear audio through headphones?,Check if audio is set to headphones as default in sound settings.
+My mouse pointer disappears?,Update display driver or toggle external monitor settings.
+How to fix error 0x80070057?,This usually indicates a Windows update error. Run Windows Update Troubleshooter.
+Laptop crashes during games?,"Could be due to overheating, outdated GPU drivers, or insufficient RAM."
+Why does laptop lag after waking from sleep?,Update power management and display drivers.
+Can’t eject external drive safely?,Close all files and programs using the drive or restart the system.
+How to disable startup apps?,Go to Task Manager > Startup tab and disable unwanted items.
+Laptop keyboard types multiple characters?,May indicate a stuck key or firmware glitch. Try external keyboard.
+Can’t adjust screen brightness?,Update display driver and check power plan settings.
+Why is disk usage 100% in Task Manager?,"Disable Superfetch, Windows Search, or update storage drivers."
+How to fix ‘Operating System Not Found’?,Check BIOS boot priority and ensure hard disk is properly connected.
+Laptop won’t install Windows updates?,Run Windows Update Troubleshooter and clear update cache.
+Why does the laptop restart during shutdown?,Disable fast startup or check for pending Windows updates.
+How do I install device drivers manually?,Download from manufacturer’s website and install as administrator.
+Can’t connect to printer wirelessly?,"Restart printer and router, reconnect Wi-Fi, and reinstall printer drivers."
+My screen is upside down?,Press Ctrl + Alt + Up Arrow to rotate display back.
+Laptop keeps showing recovery screen?,Might be failed updates or file corruption. Perform system repair.
+How to fix ‘No Bootable Device’ error?,Check BIOS boot order and verify that OS disk is detected.
+How to wipe my laptop before selling?,Reset Windows from recovery settings and choose ‘Remove everything’.
+Touchscreen is unresponsive?,Update touchscreen driver and calibrate via Control Panel.
+Bluetooth not pairing with device?,Remove device and pair again. Update Bluetooth drivers.
+Laptop randomly logs out of session?,"Check group policies, session timeouts, or malware activity."
+No display but keyboard lights on?,Try external monitor. Could be GPU or display failure.
+Why does my laptop beep on startup?,Beep codes indicate hardware issues. Refer to manufacturer’s manual.
+Laptop turns on and off repeatedly?,Could be faulty power supply or motherboard issue.
+My charger gets hot?,"Warm is normal. But if very hot, try another charger or adapter."
+Windows Activation failed?,Check product key validity and contact Microsoft support.
+Files missing after update?,Use File History or Windows Backup to restore files.
+How to enter BIOS/UEFI?,"Press F2, Del, or Esc during boot (varies by manufacturer)."
+I see static/noise on screen?,May indicate loose cable or failing graphics hardware.
+Laptop emits burning smell?,Shut down immediately. May be internal short circuit.
+Cannot detect SSD?,Update BIOS and chipset drivers. Verify SSD is properly connected.
+Laptop date resets on every boot?,Replace CMOS battery on motherboard.
+Why am I getting ‘Access Denied’ errors?,Check folder permissions or ownership.
+Laptop won’t recognize new RAM?,Check for compatibility and reseat RAM modules.
+Screen flashes white and restarts?,Could be a driver crash or hardware fault. Check Event Viewer.
+Why does my fan never turn off?,System may be overheating or fan control settings are incorrect.
+Laptop boots with black screen only?,"Check brightness, connect to external display, or force reboot."
+My laptop won't turn on. What should I do?,"Ensure the battery is charged. If not, connect the charger and try again. If the issue persists, remove any external devices, perform a hard reset by holding the power button for 15 seconds, and then attempt to power it on."
+Why is my laptop overheating?,"Overheating can result from dust buildup in cooling vents, running intensive applications, or a failing fan. Clean the vents with compressed air and ensure the laptop is on a hard, flat surface to allow proper airflow."
+What should I do if my laptop's battery isn't charging?,"Check the power adapter and cable for damage. Try using a different power outlet. If the problem continues, the battery or charging port may be faulty and require professional inspection."
+How can I fix a laptop keyboard that's not responding?,"Restart your laptop to rule out temporary glitches. If certain keys remain unresponsive, check for debris under the keys and clean if necessary. Updating or reinstalling the keyboard driver might also help."
+My laptop screen is flickering. How can I resolve this?,"Screen flickering can be caused by incompatible apps or display drivers. Update your display driver and check for software conflicts. If the issue persists, it might be a hardware problem requiring professional assistance."
+Why is there no sound coming from my laptop speakers?,Ensure the volume is turned up and not muted. Check the sound settings to confirm the correct playback device is selected. Updating or reinstalling the audio driver can also resolve this issue.
+How do I resolve a laptop touchpad that's not working?,"Verify that the touchpad isn't disabled. You can enable it via the function keys (e.g., Fn + F7) or through the control panel settings. Updating the touchpad driver may also help."
+What causes a laptop to shut down unexpectedly?,"Unexpected shutdowns can result from overheating, hardware failures, or software issues. Ensure proper ventilation, run hardware diagnostics, and check for malware or corrupted system files."
+How can I fix a laptop camera that's not detected?,Check if the camera is disabled in device settings. Update or reinstall the camera driver. Ensure that privacy settings allow apps to access the camera.
+Why is my laptop making a loud fan noise?,"Loud fan noise can indicate dust buildup or high CPU usage. Clean the fan and vents, and check for background processes consuming excessive resources."
+My laptop is running very slowly. How can I speed it up?,"Close unnecessary programs running in the background, disable startup applications, and consider upgrading your RAM or switching to a solid-state drive (SSD) for better performance."
+How do I remove malware from my laptop?,"Install reputable antivirus software, perform a full system scan, and follow the recommended steps to remove any detected malware. Keep your operating system and software updated to prevent future infections."
+Why am I getting a 'blue screen' error on my laptop?,"Blue screen errors can be caused by hardware failures, driver issues, or corrupted system files. Note the error code displayed, update your drivers, and run system diagnostics to identify the problem."
+How can I recover deleted files on my laptop?,"Check the Recycle Bin first. If the files are not there, use file recovery software. Regular backups can prevent data loss in the future."
+Why can't I install updates on my laptop?,"Insufficient storage space, corrupted system files, or network issues can prevent updates. Free up space, run the Windows Update Troubleshooter, and ensure a stable internet connection."
+How do I fix application crashes on my laptop?,"Update the application to the latest version, check for compatibility with your operating system, and reinstall if necessary. Monitoring system resources can also help identify underlying issues."
+What should I do if my laptop is stuck on the boot screen?,"Perform a hard reset. If the problem persists, boot into Safe Mode and troubleshoot recent changes or restore the system to a previous state."
+How can I resolve frequent browser crashes?,"Clear the browser cache and cookies, disable unnecessary extensions, and ensure the browser is updated to the latest version."
+Why is my laptop unable to connect to Wi-Fi?,Restart your router and laptop. Ensure the Wi-Fi adapter is enabled and update its driver. Check for any interference or incorrect network settings.
+How do I fix a 'disk full' error when there's space available?,This can be due to disk errors or hidden files consuming space. Run disk cleanup utilities and check for disk errors using built-in diagnostic tools.
+Why is my internet connection so slow on my laptop?,"Slow internet can result from network congestion, outdated network drivers, or interference. Restart your router, update network drivers, and minimize interference from other devices."
+How can I fix frequent Wi-Fi disconnections?,"Ensure your router firmware is updated, change the Wi-Fi channel to reduce interference, and update your laptop's network adapter drivers."
+What should I do if my laptop can't find any Wi-Fi networks?,"Verify that the Wi-Fi adapter is enabled. Restart the laptop and router. If the issue persists, the Wi-Fi adapter may be faulty."
+Why can't I access certain websites on my laptop?,"This could be due to DNS issues, firewall settings, or browser problems. Clear your browser cache, flush the DNS cache, and check firewall settings."
+How do I set up a VPN on my laptop?,"Choose a reputable VPN service, download and install their application, and follow the provided setup instructions."
+Why is my laptop's Bluetooth not working?,Ensure Bluetooth is enabled. Update or reinstall the Bluetooth driver. Check if the device you're connecting to is compatible and in range.
+How can I share files between my laptop and another device over the network?,"Enable file sharing settings, ensure both devices are on the same network, and access the shared folders using the network path."
