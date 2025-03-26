@@ -1,16 +1,13 @@
 import os
-import sys
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from langchain.vectorstores import FAISS
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory.chat_memory import BaseChatMemory
+from agents.session_knowledge import extract_and_store_facts, check_session_facts
 from tools.gpt_fallback import gpt_fallback_response
-from tools.session_knowledge import extract_and_store_facts, check_session_knowledge
 
-def handle(query, memory=None):
+def handle(query: str, memory: BaseChatMemory = None) -> str:
     try:
         index_path = "faiss_index"
         embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
@@ -28,10 +25,15 @@ def handle(query, memory=None):
             chain_args["memory"] = memory
 
         qa_chain = ConversationalRetrievalChain.from_llm(**chain_args)
-        result = qa_chain.invoke(query if memory else {"question": query, "chat_history": []})
 
-        answer = result.get("answer", "").strip() if isinstance(result, dict) else result.strip()
-        if not answer or "i'm not sure" in answer.lower():
+        if memory:
+            response = qa_chain.invoke({"question": query, "chat_history": memory.chat_memory.messages})
+        else:
+            response = qa_chain.invoke({"question": query, "chat_history": []})
+
+        answer = response.get("answer", "").strip()
+
+        if not answer or answer.lower() in ["i don't know.", "i’m not sure how to help with that."]:
             answer = gpt_fallback_response(query)
 
         if memory:
