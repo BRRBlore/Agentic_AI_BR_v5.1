@@ -37,9 +37,20 @@ with st.form("chat_form", clear_on_submit=True):
 
 # --- Handle Query ---
 if submitted and user_query:
+    # Step 1: Store user message in Streamlit history
     st.session_state.chat_history.append(("user", user_query))
-    ai_response = supervisor.route_query(user_query, memory=memory)  # ✅ Pass memory
+
+    # Step 2: Add user message to LangChain memory
+    memory.chat_memory.add_user_message(user_query)
+
+    # Step 3: Route query and get AI response
+    ai_response = supervisor.route_query(user_query, memory=memory)
+
+    # Step 4: Store AI response in Streamlit UI
     st.session_state.chat_history.append(("assistant", ai_response))
+
+    # Step 5: Add AI response to LangChain memory
+    memory.chat_memory.add_ai_message(ai_response)
 
 # --- Display Chat ---
 for speaker, message in st.session_state.chat_history:
@@ -52,4 +63,5 @@ for speaker, message in st.session_state.chat_history:
 st.markdown("---")
 if st.button("🔁 Reset Chat"):
     st.session_state.chat_history = []
+    memory.clear()  # ✅ Clear LangChain memory too
     st.rerun()
