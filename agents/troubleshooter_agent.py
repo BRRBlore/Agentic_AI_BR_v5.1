@@ -28,8 +28,8 @@ def handle(query, memory=None):
 
         qa_chain = ConversationalRetrievalChain.from_llm(**kwargs)
 
-        # ✅ Required input for ConversationalRetrievalChain
-        result = qa_chain.invoke({"question": query, "chat_history": []})
+        # ✅ Just pass the user query
+        result = qa_chain.invoke(query)
 
         return f"💡 {result['answer']}" if isinstance(result, dict) else f"💡 {result}"
 
