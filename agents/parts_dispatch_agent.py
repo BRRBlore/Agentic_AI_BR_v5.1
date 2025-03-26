@@ -1,33 +1,35 @@
-# agents/parts_dispatch_agent.py
-
 import re
 from tools.dispatch_api import track_delivery
-from tools.gpt_fallback import gpt_fallback_response
-from langchain.memory.chat_memory import BaseChatMemory
+from tools.gpt_fallback import gpt_fallback_response  # ✅ Fallback
 
-def extract_delivery_id(text: str) -> str:
+def extract_delivery_id(text):
     pattern = r'\b[A-Z]*\d{5,}/\d{4,}\b'
     match = re.search(pattern, text)
     return match.group(0) if match else None
 
-def handle(query: str, memory=None) -> str:
+def handle(query, memory=None):
     delivery_id = extract_delivery_id(query)
 
-    # Fallback to memory if delivery ID not found in current query
-    if not delivery_id and isinstance(memory, BaseChatMemory):
-        for msg in reversed(memory.chat_memory.messages):
+    # 🔁 Try to get from memory
+    if not delivery_id and memory:
+        for msg in memory.chat_memory.messages[::-1]:
             if msg.type == "human":
                 delivery_id = extract_delivery_id(msg.content)
                 if delivery_id:
                     break
 
-    if delivery_id:
-        response = track_delivery(delivery_id)
-    else:
-        response = gpt_fallback_response(query)
+    # ⚠️ Fallback if delivery ID not found
+    if not delivery_id:
+        return gpt_fallback_response("User is asking about a delivery but did not provide a valid delivery ID.")
 
-    # Save context to memory
+    response = track_delivery(delivery_id)
+
+    # ✅ Trigger fallback if the response is unhelpful
+    fallback_phrases = ["i'm not sure", "please rephrase", "i don't know"]
+    if any(phrase in response.lower() for phrase in fallback_phrases):
+        return gpt_fallback_response(query)
+
     if memory:
         memory.save_context({"input": query}, {"output": response})
 
-    return f"📦 {response}"
+    return response
