@@ -4,6 +4,7 @@ import streamlit as st
 import importlib.util
 import os
 from tools.memory import get_memory  # ✅ Import memory utility
+memory = get_memory()
 
 # --- Load supervisor.py dynamically ---
 def load_supervisor_module():
@@ -27,28 +28,22 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-# --- Initialize memory in session ---
-if "memory" not in st.session_state:
-    st.session_state.memory = get_memory()
-
+# --- Memory Setup ---
 if "chat_history" not in st.session_state:
     st.session_state.chat_history = []
 
-# --- User Input Form ---
+# --- User Input ---
 with st.form("chat_form", clear_on_submit=True):
     user_query = st.text_input("💬 Ask your technical, order, or delivery question:", key="input_field")
     submitted = st.form_submit_button("Send")
 
-# --- Handle User Query ---
+# --- Handle Query ---
 if submitted and user_query:
     st.session_state.chat_history.append(("user", user_query))
-
-    # ✅ Send memory to supervisor
-    ai_response = supervisor.route_query(user_query, memory=st.session_state.memory)
-
+    ai_response = supervisor.route_query(user_query)
     st.session_state.chat_history.append(("assistant", ai_response))
 
-# --- Display Chat History ---
+# --- Display Chat ---
 for speaker, message in st.session_state.chat_history:
     if speaker == "user":
         st.markdown(f"**👤 You:** {message}")
@@ -59,5 +54,4 @@ for speaker, message in st.session_state.chat_history:
 st.markdown("---")
 if st.button("🔁 Reset Chat"):
     st.session_state.chat_history = []
-    st.session_state.memory = get_memory()
     st.rerun()
