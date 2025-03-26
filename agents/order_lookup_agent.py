@@ -1,44 +1,37 @@
-# agents/order_lookup_agent.py
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from tools.order_db import lookup_order
-from tools.session_knowledge import extract_facts_and_store
-from langchain.memory.chat_memory import BaseChatMemory
-
+from tools.gpt_fallback import gpt_fallback_response
+from tools.session_knowledge import extract_and_store_facts, check_session_knowledge
 
 def handle(query: str, memory=None) -> str:
-    try:
-        # Step 1: Extract order ID from current query
-        words = query.split()
-        order_id = None
-        for word in words:
-            if len(word) >= 6 and any(char.isdigit() for char in word):
-                order_id = word
+    order_id = None
+    words = query.split()
+    for word in words:
+        if len(word) >= 6 and any(char.isdigit() for char in word):
+            order_id = word
+            break
+
+    if not order_id and memory:
+        history = memory.chat_memory.messages[::-1]
+        for msg in history:
+            if msg.type == "human" and "order id" in msg.content.lower():
+                for word in msg.content.split():
+                    if len(word) >= 6 and any(char.isdigit() for char in word):
+                        order_id = word
+                        break
+            if order_id:
                 break
 
-        # Step 2: Fallback to memory if not found
-        if not order_id and isinstance(memory, BaseChatMemory):
-            past_messages = memory.chat_memory.messages[::-1]
-            for msg in past_messages:
-                if msg.type == "human" and "order" in msg.content.lower():
-                    for word in msg.content.split():
-                        if len(word) >= 6 and any(char.isdigit() for char in word):
-                            order_id = word
-                            break
-                if order_id:
-                    break
+    if not order_id:
+        return gpt_fallback_response(query)
 
-        if not order_id:
-            return "❌ Please provide a valid order ID."
+    response = lookup_order(order_id)
 
-        # Step 3: Retrieve order status
-        response = lookup_order(order_id)
+    if memory:
+        memory.save_context({"input": query}, {"output": response})
+        extract_and_store_facts(query, response, memory)
 
-        # Step 4: Save to memory + session knowledge
-        if memory:
-            memory.save_context({"input": query}, {"output": response})
-            extract_facts_and_store(response, memory=memory)
-
-        return response
-
-    except Exception as e:
-        return f"❌ Error in Order Lookup Agent: {str(e)}"
+    return response
