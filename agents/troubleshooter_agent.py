@@ -4,6 +4,7 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory.chat_memory import BaseChatMemory
+from tools.gpt_fallback import gpt_fallback  # ✅ Fallback import
 
 def handle(query, memory=None):
     try:
@@ -18,20 +19,20 @@ def handle(query, memory=None):
             openai_api_key=os.environ.get("OPENAI_API_KEY")
         )
 
-        kwargs = {"llm": llm, "retriever": retriever}
+        chain_args = {"llm": llm, "retriever": retriever}
         if isinstance(memory, BaseChatMemory):
-            kwargs["memory"] = memory
+            chain_args["memory"] = memory
 
-        qa_chain = ConversationalRetrievalChain.from_llm(**kwargs)
+        qa_chain = ConversationalRetrievalChain.from_llm(**chain_args)
 
-        input_data = {"question": query}
-        result = qa_chain.invoke(input_data)
+        result = qa_chain.invoke(query if memory else {"question": query, "chat_history": []})
 
-        # ✅ Save context manually (fix for memory persistence)
-        if memory is not None:
-            memory.save_context(input_data, {"answer": result["answer"]})
+        # ✅ Check if the answer is vague or non-informative
+        answer = result["answer"] if isinstance(result, dict) else str(result)
+        if "i'm not sure" in answer.lower() or "please rephrase" in answer.lower():
+            return gpt_fallback(query)
 
-        return f"💡 {result['answer']}" if isinstance(result, dict) else f"💡 {result}"
+        return f"💡 {answer}"
 
     except Exception as e:
         return f"❌ Error in Troubleshooter Agent: {str(e)}"
