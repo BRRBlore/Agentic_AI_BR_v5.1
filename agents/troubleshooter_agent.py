@@ -1,10 +1,11 @@
 import os
+import re
 from langchain.vectorstores import FAISS
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory.chat_memory import BaseChatMemory
-from tools.gpt_fallback import gpt_fallback  # ✅ Fallback import
+from tools.gpt_fallback import gpt_fallback_response  # ✅ Correct fallback import
 
 def handle(query, memory=None):
     try:
@@ -24,14 +25,13 @@ def handle(query, memory=None):
             chain_args["memory"] = memory
 
         qa_chain = ConversationalRetrievalChain.from_llm(**chain_args)
+
         result = qa_chain.invoke(query if memory else {"question": query, "chat_history": []})
 
-        answer = result["answer"] if isinstance(result, dict) else result
-
-        if answer.strip().lower() in ["i don't know.", "i am not sure.", "not sure."]:
-            return gpt_fallback(query)  # ✅ Fallback if vague
-
+        answer = result['answer'] if isinstance(result, dict) else result
+        if "I don't know" in answer or "not sure" in answer:
+            return gpt_fallback_response(query)
         return f"💡 {answer}"
 
-    except Exception:
-        return gpt_fallback(query)
+    except Exception as e:
+        return gpt_fallback_response(query)
