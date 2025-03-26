@@ -1,5 +1,3 @@
-# app.py
-
 import streamlit as st
 import importlib.util
 import os
@@ -40,7 +38,7 @@ with st.form("chat_form", clear_on_submit=True):
 # --- Handle Query ---
 if submitted and user_query:
     st.session_state.chat_history.append(("user", user_query))
-    ai_response = supervisor.route_query(user_query)
+    ai_response = supervisor.route_query(user_query, memory=memory)  # ✅ Pass memory
     st.session_state.chat_history.append(("assistant", ai_response))
 
 # --- Display Chat ---
