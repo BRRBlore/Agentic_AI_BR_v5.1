@@ -8,40 +8,27 @@ from langchain.chains import ConversationalRetrievalChain
 
 def handle(query, memory=None):
     try:
-        # ✅ Absolute path to FAISS index in Google Drive
-        index_path = "/content/drive/My Drive/AI_Agent_4/faiss_index"
-        
-        # Load embedding model
-        embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-        
-        # Load FAISS vectorstore
-        vectorstore = FAISS.load_local(
-            index_path, 
-            embedding_model, 
-            allow_dangerous_deserialization=True
-        )
+        # ✅ Use relative path for compatibility with Streamlit Cloud
+        index_path = os.path.join("faiss_index")
 
-        # Create retriever from vectorstore
+        # ✅ Load embeddings and FAISS vector store
+        embedding_model = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+        vectorstore = FAISS.load_local(index_path, embedding_model, allow_dangerous_deserialization=True)
         retriever = vectorstore.as_retriever(search_type="similarity", k=3)
 
-        # Load OpenAI LLM
-        llm = ChatOpenAI(
-            model="gpt-3.5-turbo",
-            temperature=0,
-            openai_api_key=os.environ.get("OPENAI_API_KEY")
-        )
+        # ✅ Set up LLM
+        llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
 
-        # Setup RAG chain with context-aware memory
+        # ✅ RAG Chain with context-aware memory
         qa_chain = ConversationalRetrievalChain.from_llm(
             llm=llm,
             retriever=retriever,
             memory=memory
         )
 
-        # ✅ Replaces deprecated `.run()` with `.invoke()`
+        # ✅ Updated to use `.invoke()` as per LangChain >= 0.1
         result = qa_chain.invoke({"question": query})
-        
-        return f"💡 {result}"
+        return f"💡 {result['answer']}"
 
     except Exception as e:
         return f"❌ Error in Troubleshooter Agent: {str(e)}"
