@@ -1,3 +1,5 @@
+# agents/troubleshooter_agent.py
+
 import os
 from langchain.vectorstores import FAISS
 from langchain.embeddings import HuggingFaceEmbeddings
@@ -27,9 +29,13 @@ def handle(query, memory=None):
         # ✅ Create Conversational RAG chain
         qa_chain = ConversationalRetrievalChain.from_llm(**kwargs)
 
-        # ✅ Proper call: input must be a dict
-        result = qa_chain.invoke({"question": query})
+        # ✅ Include chat history if available
+        input_data = {
+            "question": query,
+            "chat_history": memory.chat_memory.messages if memory else []
+        }
 
+        result = qa_chain.invoke(input_data)
         return f"💡 {result['answer']}" if isinstance(result, dict) else f"💡 {result}"
 
     except Exception as e:
