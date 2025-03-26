@@ -24,15 +24,14 @@ def handle(query, memory=None):
             chain_args["memory"] = memory
 
         qa_chain = ConversationalRetrievalChain.from_llm(**chain_args)
-
         result = qa_chain.invoke(query if memory else {"question": query, "chat_history": []})
 
-        # ✅ Check if the answer is vague or non-informative
-        answer = result["answer"] if isinstance(result, dict) else str(result)
-        if "i'm not sure" in answer.lower() or "please rephrase" in answer.lower():
-            return gpt_fallback(query)
+        answer = result["answer"] if isinstance(result, dict) else result
+
+        if answer.strip().lower() in ["i don't know.", "i am not sure.", "not sure."]:
+            return gpt_fallback(query)  # ✅ Fallback if vague
 
         return f"💡 {answer}"
 
-    except Exception as e:
-        return f"❌ Error in Troubleshooter Agent: {str(e)}"
+    except Exception:
+        return gpt_fallback(query)
