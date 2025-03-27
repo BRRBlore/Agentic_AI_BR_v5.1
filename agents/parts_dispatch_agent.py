@@ -1,39 +1,32 @@
-from tools.dispatch_api import track_delivery
-import re
+import os
+from tools.dispatch_api import check_delivery_status
 from langchain.memory.chat_memory import BaseChatMemory
-from agents.session_knowledge import extract_and_store_facts, check_session_knowledge
 from tools.gpt_fallback import gpt_fallback_response
-
-def extract_delivery_id(text):
-    pattern = r'\b[A-Z]*\d{5,}/\d{4,}\b'
-    match = re.search(pattern, text)
-    return match.group(0) if match else None
+from tools.session_knowledge import extract_and_store_facts, check_session_knowledge
 
 def handle(query: str, memory: BaseChatMemory = None) -> str:
-    # Phase 2: Check session knowledge
-    session_answer = check_session_knowledge(query)
-    if session_answer:
-        return f"🧠 {session_answer}"
+    try:
+        session_answer = check_session_knowledge(query)
+        if session_answer:
+            return f"🧠 {session_answer}"
 
-    # Extract delivery ID
-    delivery_id = extract_delivery_id(query)
-    if not delivery_id and memory:
-        for msg in memory.chat_memory.messages[::-1]:
-            if msg.type == "human":
-                delivery_id = extract_delivery_id(msg.content)
-                if delivery_id:
-                    break
+        delivery_id = None
+        if memory:
+            history = memory.load_memory_variables({}).get("chat_history", "")
+            if "Delivery ID:" in history:
+                delivery_id = history.split("Delivery ID:")[-1].split()[0].strip()
 
-    if not delivery_id:
-        return gpt_fallback_response(query)
+        response = check_delivery_status(query, memory=memory, previous_delivery_id=delivery_id)
 
-    response = track_delivery(delivery_id)
+        if not response or "not sure" in response.lower():
+            response = gpt_fallback_response(query)
 
-    # Phase 1: Store facts
-    extract_and_store_facts(query, response)
+        extract_and_store_facts(query, response)
 
-    # Save memory
-    if memory:
-        memory.save_context({"input": query}, {"output": response})
+        if memory:
+            memory.save_context({"input": query}, {"output": response})
 
-    return response
+        return f"🚚 {response}"
+
+    except Exception as e:
+        return f"❌ Parts Dispatch Agent Error: {str(e)}"
