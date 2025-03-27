@@ -1,7 +1,7 @@
 from tools.dispatch_api import track_delivery
 import re
 from langchain.memory.chat_memory import BaseChatMemory
-from agents.session_knowledge import extract_and_store_facts, check_session_knowledge
+from tools.session_knowledge import extract_and_store_facts, check_session_knowledge
 from tools.gpt_fallback import gpt_fallback_response
 
 def extract_delivery_id(text):
