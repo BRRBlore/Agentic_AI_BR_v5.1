@@ -15,7 +15,10 @@ faiss-cpu
 
 # Data Handling
 pandas
-openpyxl  # For reading Excel files
+openpyxl # For reading Excel files
 
 # Optional Debugging
 tqdm
+
+# Standard Library (if needed)
+importlib
