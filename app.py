@@ -15,7 +15,8 @@ def load_supervisor_module():
 supervisor = load_supervisor_module()
 
 # --- Streamlit Config ---
-st.set_page_config(page_title="Tech Support Chat Agent BR v5.1", layout="wide")
+st.set_page_config(page_title="Tech Support Chat Agent BR v5.1 🚀", layout="wide")
+
 
 # --- Header ---
 st.markdown("""
