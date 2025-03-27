@@ -4,9 +4,8 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.chat_models import ChatOpenAI
 from langchain.chains import ConversationalRetrievalChain
 from langchain.memory.chat_memory import BaseChatMemory
-
-from tools.session_knowledge import extract_and_store_facts, check_session_knowledge
-from tools.gpt_fallback import gpt_fallback_response
+from ..tools.session_knowledge import extract_and_store_facts, check_session_knowledge
+from ..tools.gpt_fallback import gpt_fallback_response
 
 def handle(query: str, memory: BaseChatMemory = None) -> str:
     try:
@@ -22,11 +21,11 @@ def handle(query: str, memory: BaseChatMemory = None) -> str:
         llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0, openai_api_key=os.environ.get("OPENAI_API_KEY"))
 
         chain_args = {"llm": llm, "retriever": retriever}
-        if memory:
+        if memory and isinstance(memory, BaseChatMemory):
             chain_args["memory"] = memory
 
         qa_chain = ConversationalRetrievalChain.from_llm(**chain_args)
-        result = qa_chain.invoke(query if not memory else {"question": query, "chat_history": []})
+        result = qa_chain.invoke(query if memory is None else {"question": query, "chat_history": []})
         answer = result["answer"] if isinstance(result, dict) else result
 
         if not answer or answer.strip().lower() in ["i don't know", "not sure", ""]:
