@@ -14,15 +14,11 @@ AGENT_KEYWORDS = {
 # ✅ Accept memory as a second argument
 def route_query(query, memory=None):
     query_lower = query.lower()
-
     if any(keyword in query_lower for keyword in AGENT_KEYWORDS["troubleshooter_agent"]):
         return troubleshooter_agent.handle(query, memory=memory)
-
     elif any(keyword in query_lower for keyword in AGENT_KEYWORDS["order_lookup_agent"]):
         return order_lookup_agent.handle(query, memory=memory)
-
     elif any(keyword in query_lower for keyword in AGENT_KEYWORDS["parts_dispatch_agent"]):
         return parts_dispatch_agent.handle(query, memory=memory)
-
     else:
         return "🤖 I'm not sure how to help with that. Please rephrase or try a different question."
